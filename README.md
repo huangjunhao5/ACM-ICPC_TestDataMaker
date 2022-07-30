@@ -38,7 +38,7 @@ run函数需要进行基本的运行判断，判断生成数据的必要参数�
 
 接下来是成员函数的说明：
 
-##1、std::string fileNameMaker(int name, std::string testPath, bool __IS_INPUT_FILE)
+## std::string fileNameMaker(int name, std::string testPath, bool __IS_INPUT_FILE)
 
 该函数的作用是返回生成数据文件的全路径，以便数据进行生成。
 
@@ -50,7 +50,7 @@ run函数需要进行基本的运行判断，判断生成数据的必要参数�
 
 
 
-##void makeInFile(std::string __INPUT_FILE__ ,int __text_num)
+## void makeInFile(std::string __INPUT_FILE__ ,int __text_num)
 
 该函数的作用是生成对应测试数据的输入文件（.in）
 
@@ -60,13 +60,13 @@ run函数需要进行基本的运行判断，判断生成数据的必要参数�
 
 
 
-##void setPath(std::string path)
+## void setPath(std::string path)
 
 该函数的作用是设置数据生成路径
 
 
 
-##void setTextNum(int num)
+## void setTextNum(int num)
 
 该函数的作用是设置数据组数
 
@@ -76,7 +76,7 @@ run函数需要进行基本的运行判断，判断生成数据的必要参数�
 
 
 
-##void setignoreMakeInputDataError(bool model)
+## void setignoreMakeInputDataError(bool model)
 
 设置忽略输入数据生成错误（不建议），设置为true后，将忽略大部分数据生成异常
 
@@ -88,7 +88,7 @@ run函数需要进行基本的运行判断，判断生成数据的必要参数�
 
 
 
-构造函数：3个参数，随意放置位置，为
+## 构造函数：3个参数，随意放置位置
 
 1、数据生成函数
 
@@ -101,7 +101,7 @@ run函数需要进行基本的运行判断，判断生成数据的必要参数�
 
 
 
-#SpecialJudgeDataMaker
+# SpecialJudgeDataMaker
 
 SpecialJudgeDataMaker：继承自DataMaker类，用于实现生成SpecialJudge题目的数据
 
@@ -115,7 +115,7 @@ SpecialJudgeDataMaker：继承自DataMaker类，用于实现生成SpecialJudge�
 
 
 
-#DataMakerFromEXE
+# DataMakerFromEXE
 
 DataMakerFromEXE：继承自DataMaker类，用于实现生成数据，使用std可执行文件生成数据
 
@@ -125,7 +125,7 @@ DataMakerFromEXE：继承自DataMaker类，用于实现生成数据，使用std�
 
 
 
-##void makeOutFileEXE(std::string __INPUT_FILE__, std::string __OUTPUT_FILE__, int __text_num)
+## void makeOutFileEXE(std::string __INPUT_FILE__, std::string __OUTPUT_FILE__, int __text_num)
 
 通过系统调用std标程的可执行文件生成输出文件(.out)
 
@@ -137,7 +137,7 @@ DataMakerFromEXE：继承自DataMaker类，用于实现生成数据，使用std�
 
 
 
-构造函数：提供3个参数、4个参数的构造函数
+## 构造函数：提供3个参数、4个参数的构造函数
 
 3个参数的构造函数与DataMaker相同
 
