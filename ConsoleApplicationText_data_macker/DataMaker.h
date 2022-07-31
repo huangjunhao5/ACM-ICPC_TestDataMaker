@@ -20,10 +20,10 @@
 class DataMaker
 {
 protected:
-	typedef void (*MakeTextFun)(int textcase);
+	typedef void (*MakeTestFun)(int testcase);
 	std::string testcasePath = "";	
-	MakeTextFun testMakeFunction = nullptr;
-	int textNum = 12;
+	MakeTestFun testMakeFunction = nullptr;
+	int testNum = 12;
 	
 	bool ignoreMakeInputDataError = 0;
 
@@ -52,7 +52,7 @@ protected:
 	}
 
 	//使用fun函数构造数据
-	void makeInFile(std::string __INPUT_FILE__ ,int __text_num) {
+	void makeInFile(std::string __INPUT_FILE__ ,int __test_num) {
 		std::cerr << __INPUT_FILE__ << " :make begin" << std::endl;
 		auto it = freopen(__INPUT_FILE__.c_str(), "w", stdout);
 		if (it == nullptr) {
@@ -65,36 +65,36 @@ protected:
 		}
 		{
 			//在这里构造数据
-			testMakeFunction(__text_num);
+			testMakeFunction(__test_num);
 		}
 		fclose(stdout);
 		std::cerr << __INPUT_FILE__ << " :make done" << std::endl;
 	}
 
-	virtual void make(int __text_num) = 0;
+	virtual void make(int __test_num) = 0;
 public:
 	virtual void run() = 0;
 	virtual void defaultPathSet() {
 		testcasePath = "D:/input/";
-		textNum = 12;
+		testNum = 12;
 	}
 	DataMaker() { defaultPathSet(); }
 	//构造函数：提供无参构造函数，有参构造函数有3个参数,参数位置随意
 	//可以省略测试数据个数，默认为12组数据
-	DataMaker(std::string path, MakeTextFun func, int textNum = 12) : testcasePath(path), testMakeFunction(func), textNum(textNum) {}
-	DataMaker(std::string path, int textNum, MakeTextFun func) : testcasePath(path), testMakeFunction(func), textNum(textNum) {}
-	DataMaker(int textNum, std::string path, MakeTextFun func) : testcasePath(path), testMakeFunction(func), textNum(textNum) {}
-	DataMaker(int textNum, MakeTextFun func, std::string path) : testcasePath(path), testMakeFunction(func), textNum(textNum) {}
-	DataMaker(MakeTextFun func, int textNum, std::string path) : testcasePath(path), testMakeFunction(func), textNum(textNum) {}
-	DataMaker(MakeTextFun func, std::string path, int textNum = 12) : testcasePath(path), testMakeFunction(func), textNum(textNum) {}
+	DataMaker(std::string path, MakeTestFun func, int testNum = 12) : testcasePath(path), testMakeFunction(func), testNum(testNum) {}
+	DataMaker(std::string path, int testNum, MakeTestFun func) : testcasePath(path), testMakeFunction(func), testNum(testNum) {}
+	DataMaker(int testNum, std::string path, MakeTestFun func) : testcasePath(path), testMakeFunction(func), testNum(testNum) {}
+	DataMaker(int testNum, MakeTestFun func, std::string path) : testcasePath(path), testMakeFunction(func), testNum(testNum) {}
+	DataMaker(MakeTestFun func, int testNum, std::string path) : testcasePath(path), testMakeFunction(func), testNum(testNum) {}
+	DataMaker(MakeTestFun func, std::string path, int testNum = 12) : testcasePath(path), testMakeFunction(func), testNum(testNum) {}
 
 	void setPath(std::string path) {
 		this->testcasePath = path;
 	}
-	void setTextNum(int num) {
-		this->textNum = num;
+	void setTestNum(int num) {
+		this->testNum = num;
 	}
-	void setMakeTextFunc(MakeTextFun func) {
+	void setMakeTestFunc(MakeTestFun func) {
 		this->testMakeFunction = func;
 	}
 
@@ -113,30 +113,30 @@ public:
 // 如果使用无参构造函数，将使用默认配置
 class SpecialJudgeDataMaker :public DataMaker {
 protected:
-	virtual void make(int __text_num) override {
-		std::cerr << "Text" << __text_num << " :make begin" << std::endl;
-		std::string __INPUT_FILE__ = fileNameMaker(__text_num, testcasePath, 1);
+	virtual void make(int __test_num) override {
+		std::cerr << "Test" << __test_num << " :make begin" << std::endl;
+		std::string __INPUT_FILE__ = fileNameMaker(__test_num, testcasePath, 1);
 
-		makeInFile(__INPUT_FILE__, __text_num);
+		makeInFile(__INPUT_FILE__, __test_num);
 		//std解法
 
 		//Special Judge不产生.out文件，将跳过输出数据生成
 		//使用std标程重定向到文件输出.out文件
 
-		std::cerr << "Special Judge Text , Skip OutputFile Create !" << std::endl;
+		std::cerr << "Special Judge Test , Skip OutputFile Create !" << std::endl;
 
-		std::cerr << "Text" << __text_num << " :make done!" << std::endl;
+		std::cerr << "Test" << __test_num << " :make done!" << std::endl;
 		std::cerr << std::endl;
 	}
 public:
 	virtual void run() override {
 		if (testMakeFunction == nullptr)throw std::runtime_error("NullPtrError:You are not set make function!");
 		if (testcasePath == "")throw std::runtime_error("NoPathError:You are not set path!");
-		if (textNum < 1)throw std::runtime_error("NoTextNumError:You are not set textnum!");
-		for (int i = 1; i <= textNum; i++) {
+		if (testNum < 1)throw std::runtime_error("NoTestNumError:You are not set testnum!");
+		for (int i = 1; i <= testNum; i++) {
 			make(i);
 		}
-		std::cerr << "All TextCases make done!" << std::endl;
+		std::cerr << "All TestCases make done!" << std::endl;
 	}
 
 	virtual void defaultPathSet() override {
@@ -147,12 +147,12 @@ public:
 	//继承父类构造函数，不提供新的构造函数（不需要新构造函数）
 	//构造函数：提供无参构造函数，有参构造函数有3个参数,参数位置随意
 	//可以省略测试数据个数，默认为12组数据
-	SpecialJudgeDataMaker(std::string path, MakeTextFun func, int textNum = 12) : DataMaker(path, func, textNum) {}
-	SpecialJudgeDataMaker(std::string path, int textNum, MakeTextFun func) : DataMaker(path, func, textNum) {}
-	SpecialJudgeDataMaker(int textNum, std::string path, MakeTextFun func) : DataMaker(path, func, textNum) {}
-	SpecialJudgeDataMaker(int textNum, MakeTextFun func, std::string path) : DataMaker(path, func, textNum) {}
-	SpecialJudgeDataMaker(MakeTextFun func, int textNum, std::string path) : DataMaker(path, func, textNum) {}
-	SpecialJudgeDataMaker(MakeTextFun func, std::string path, int textNum = 12) : DataMaker(path, func, textNum) {}
+	SpecialJudgeDataMaker(std::string path, MakeTestFun func, int testNum = 12) : DataMaker(path, func, testNum) {}
+	SpecialJudgeDataMaker(std::string path, int testNum, MakeTestFun func) : DataMaker(path, func, testNum) {}
+	SpecialJudgeDataMaker(int testNum, std::string path, MakeTestFun func) : DataMaker(path, func, testNum) {}
+	SpecialJudgeDataMaker(int testNum, MakeTestFun func, std::string path) : DataMaker(path, func, testNum) {}
+	SpecialJudgeDataMaker(MakeTestFun func, int testNum, std::string path) : DataMaker(path, func, testNum) {}
+	SpecialJudgeDataMaker(MakeTestFun func, std::string path, int testNum = 12) : DataMaker(path, func, testNum) {}
 };
 
 
@@ -164,7 +164,7 @@ protected:
 	std::string cmd;
 
 	//使用标程的EXE文件构造数据
-	void makeOutFileEXE(std::string __INPUT_FILE__, std::string __OUTPUT_FILE__, int __text_num) {
+	void makeOutFileEXE(std::string __INPUT_FILE__, std::string __OUTPUT_FILE__, int __test_num) {
 		std::cerr << __OUTPUT_FILE__ << " :make begin" << std::endl;
 		auto tcmd = cmd;
 		//cmd字符串为std程序的全路径
@@ -183,21 +183,21 @@ protected:
 		}
 	}
 
-	virtual void make(int __text_num) override {
-		std::cerr << "Text" << __text_num << " :make begin" << std::endl;
-		std::string __INPUT_FILE__ = fileNameMaker(__text_num, testcasePath, 1);
-		std::string __OUTPUT_FILE__ = fileNameMaker(__text_num, testcasePath, 0);
+	virtual void make(int __test_num) override {
+		std::cerr << "Test" << __test_num << " :make begin" << std::endl;
+		std::string __INPUT_FILE__ = fileNameMaker(__test_num, testcasePath, 1);
+		std::string __OUTPUT_FILE__ = fileNameMaker(__test_num, testcasePath, 0);
 
-		makeInFile(__INPUT_FILE__, __text_num);
+		makeInFile(__INPUT_FILE__, __test_num);
 		//std解法
 
 		//Special Judge不产生.out文件，将跳过输出数据生成
 		//如果不是SpecialJudge，生成.out文件
-		makeOutFileEXE(__INPUT_FILE__, __OUTPUT_FILE__, __text_num);
+		makeOutFileEXE(__INPUT_FILE__, __OUTPUT_FILE__, __test_num);
 
 		//使用std标程重定向到文件输出.out文件
 
-		std::cerr << "Text" << __text_num << " :make done!" << std::endl;
+		std::cerr << "Test" << __test_num << " :make done!" << std::endl;
 		std::cerr << std::endl;
 	}
 
@@ -205,12 +205,12 @@ public:
 	virtual void run() override {
 		if (testMakeFunction == nullptr)throw std::runtime_error("NullPtrError:You are not set make function!");
 		if (testcasePath == "")throw std::runtime_error("NoPathError:You are not set path!");
-		if (textNum < 1)throw std::runtime_error("NoTextNumError:You are not set textnum!");
+		if (testNum < 1)throw std::runtime_error("NoTestNumError:You are not set testnum!");
 		if (cmd == "")throw std::runtime_error("NoStdSourceError:You are not set std Source!");
-		for (int i = 1; i <= textNum; i++) {
+		for (int i = 1; i <= testNum; i++) {
 			make(i);
 		}
-		std::cerr << "All TextCases make done!" << std::endl;
+		std::cerr << "All TestCases make done!" << std::endl;
 	}
 
 	virtual void defaultPathSet() override {
@@ -225,34 +225,34 @@ public:
 	DataMakerFromEXE() { this->defaultPathSet(); }
 	//构造函数：提供无参构造函数，有参构造函数有4个参数，第一个参数必须为std程序的路径，其余参数随意
 	//可以省略测试数据个数，默认为12组数据
-	DataMakerFromEXE(std::string stdEXEPath, std::string path, MakeTextFun func, int textNum = 12) : DataMaker(path,func,textNum) {
+	DataMakerFromEXE(std::string stdEXEPath, std::string path, MakeTestFun func, int testNum = 12) : DataMaker(path,func,testNum) {
 		setstdEXEPath(stdEXEPath);
 	}
-	DataMakerFromEXE(std::string stdEXEPath, std::string path, int textNum, MakeTextFun func) : DataMaker(path, func, textNum) {
+	DataMakerFromEXE(std::string stdEXEPath, std::string path, int testNum, MakeTestFun func) : DataMaker(path, func, testNum) {
 		setstdEXEPath(stdEXEPath);
 	}
-	DataMakerFromEXE(std::string stdEXEPath, int textNum, std::string path, MakeTextFun func) : DataMaker(path, func, textNum) {
+	DataMakerFromEXE(std::string stdEXEPath, int testNum, std::string path, MakeTestFun func) : DataMaker(path, func, testNum) {
 		setstdEXEPath(stdEXEPath);
 	}
-	DataMakerFromEXE(std::string stdEXEPath, int textNum, MakeTextFun func, std::string path) : DataMaker(path, func, textNum) {
+	DataMakerFromEXE(std::string stdEXEPath, int testNum, MakeTestFun func, std::string path) : DataMaker(path, func, testNum) {
 		setstdEXEPath(stdEXEPath);
 	}
-	DataMakerFromEXE(std::string stdEXEPath, MakeTextFun func, int textNum, std::string path) : DataMaker(path, func, textNum) {
+	DataMakerFromEXE(std::string stdEXEPath, MakeTestFun func, int testNum, std::string path) : DataMaker(path, func, testNum) {
 		setstdEXEPath(stdEXEPath);
 	}
-	DataMakerFromEXE(std::string stdEXEPath, MakeTextFun func, std::string path, int textNum = 12) : DataMaker(path, func, textNum) {
+	DataMakerFromEXE(std::string stdEXEPath, MakeTestFun func, std::string path, int testNum = 12) : DataMaker(path, func, testNum) {
 		setstdEXEPath(stdEXEPath);
 	}
 	
 	//继承父类构造函数
 	//构造函数：提供无参构造函数，有参构造函数有3个参数,参数位置随意
 	//可以省略测试数据个数，默认为12组数据
-	DataMakerFromEXE(std::string path, MakeTextFun func, int textNum = 12) : DataMaker(path,func,textNum) {}
-	DataMakerFromEXE(std::string path, int textNum, MakeTextFun func) : DataMaker(path, func, textNum) {}
-	DataMakerFromEXE(int textNum, std::string path, MakeTextFun func) : DataMaker(path, func, textNum) {}
-	DataMakerFromEXE(int textNum, MakeTextFun func, std::string path) : DataMaker(path, func, textNum) {}
-	DataMakerFromEXE(MakeTextFun func, int textNum, std::string path) : DataMaker(path, func, textNum) {}
-	DataMakerFromEXE(MakeTextFun func, std::string path, int textNum = 12) : DataMaker(path, func, textNum) {}
+	DataMakerFromEXE(std::string path, MakeTestFun func, int testNum = 12) : DataMaker(path,func,testNum) {}
+	DataMakerFromEXE(std::string path, int testNum, MakeTestFun func) : DataMaker(path, func, testNum) {}
+	DataMakerFromEXE(int testNum, std::string path, MakeTestFun func) : DataMaker(path, func, testNum) {}
+	DataMakerFromEXE(int testNum, MakeTestFun func, std::string path) : DataMaker(path, func, testNum) {}
+	DataMakerFromEXE(MakeTestFun func, int testNum, std::string path) : DataMaker(path, func, testNum) {}
+	DataMakerFromEXE(MakeTestFun func, std::string path, int testNum = 12) : DataMaker(path, func, testNum) {}
 };
 
 class DataMakerFromCppSourceFile :public DataMakerFromEXE {
@@ -292,21 +292,21 @@ protected:
 		}
 	}
 
-	virtual void make(int __text_num) override {
-		std::cerr << "Text" << __text_num << " :make begin" << std::endl;
-		std::string __INPUT_FILE__ = fileNameMaker(__text_num, testcasePath, 1);
-		std::string __OUTPUT_FILE__ = fileNameMaker(__text_num, testcasePath, 0);
+	virtual void make(int __test_num) override {
+		std::cerr << "Test" << __test_num << " :make begin" << std::endl;
+		std::string __INPUT_FILE__ = fileNameMaker(__test_num, testcasePath, 1);
+		std::string __OUTPUT_FILE__ = fileNameMaker(__test_num, testcasePath, 0);
 
-		makeInFile(__INPUT_FILE__, __text_num);
+		makeInFile(__INPUT_FILE__, __test_num);
 		//std解法
 
 		//Special Judge不产生.out文件，将跳过输出数据生成
 		//如果不是SpecialJudge，生成.out文件
-		makeOutFileEXE(__INPUT_FILE__, __OUTPUT_FILE__, __text_num);
+		makeOutFileEXE(__INPUT_FILE__, __OUTPUT_FILE__, __test_num);
 
 		//使用std标程重定向到文件输出.out文件
 
-		std::cerr << "Text" << __text_num << " :make done!" << std::endl;
+		std::cerr << "Test" << __test_num << " :make done!" << std::endl;
 		std::cerr << std::endl;
 	}
 public:

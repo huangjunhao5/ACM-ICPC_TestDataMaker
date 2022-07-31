@@ -1,4 +1,4 @@
-﻿// ConsoleApplicationText_data_macker.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
+﻿// ConsoleApplicationTest_data_macker.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
 //
 
 #include<bits/stdc++.h>
@@ -67,9 +67,9 @@ signed main() {
 	//stdEXEPath是标程在电脑上的全路径
 	string testPath = "D:/input/";
 	//testPath是生成数据的全路径
-	__int32 textnum;
-	cin >> textnum;
-	DataMaker* maker = new DataMakerFromEXE(stdEXEPath ,testPath, make, textnum);
+	__int32 testnum;
+	cin >> testnum;
+	DataMaker* maker = new DataMakerFromEXE(stdEXEPath ,testPath, make, testnum);
 	maker->run();
 	delete maker;
 	return 0;
