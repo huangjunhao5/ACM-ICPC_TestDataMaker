@@ -147,7 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ConsoleApplicationText_data_macker.cpp" />
+    <ClCompile Include="SampleCode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataMaker.h" />

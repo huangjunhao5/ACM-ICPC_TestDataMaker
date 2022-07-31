@@ -1,4 +1,4 @@
-﻿// ConsoleApplicationTest_data_macker.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
+﻿// SampleCode.cpp : 此文件为DataMaker使用的示例代码
 //
 
 #include<bits/stdc++.h>

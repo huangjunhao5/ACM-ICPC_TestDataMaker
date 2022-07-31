@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ConsoleApplicationText_data_macker.cpp">
+    <ClCompile Include="SampleCode.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
