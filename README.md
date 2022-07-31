@@ -52,7 +52,7 @@ run函数需要进行基本的运行判断，判断生成数据的必要参数�
 
 
 
-## void makeInFile(std::string __INPUT_FILE__ ,int __text_num)
+## void makeInFile(std::string __INPUT_FILE__ ,int __test_num)
 
 该函数的作用是生成对应测试数据的输入文件（.in）
 
@@ -68,11 +68,11 @@ run函数需要进行基本的运行判断，判断生成数据的必要参数�
 
 
 
-## void setTextNum(int num)
+## void setTestNum(int num)
 
 该函数的作用是设置数据组数
 
-## void setMakeTextFunc(MakeTextFun func)
+## void setMakeTestFunc(MakeTestFun func)
 
 该函数的作用是设置输入数据生成函数
 
