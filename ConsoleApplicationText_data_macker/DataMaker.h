@@ -276,11 +276,11 @@ protected:
 
 	void compileCppFile(std::string stdSourceFilePath) {
 		if (gccCompilePath == "" && vcCompile == "") {
-			cerr << "compile path not set,system will auto get comple path" << std::endl;
+			std::cerr << "compile path not set,system will auto get comple path" << std::endl;
 			autoComilePath();
 		}
 		if (gccCompilePath == "" && vcCompile == "") {
-			cerr << "compile error : system can't get comple path" << std::endl;
+			std::cerr << "compile error : system can't get comple path" << std::endl;
 			throw std::runtime_error("NoCompilePathError:system path has no comile path");
 		}
 		std::string compileCmd;
