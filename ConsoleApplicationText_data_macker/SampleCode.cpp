@@ -18,15 +18,17 @@ mt19937 mt(rd());
 //用于生成数据的函数：必须为void型，并且要接受一个参数，该参数表示当前生成的数据编号
 void make(__int32 num) {
 	int n = 10, m = 100;
+	cout << n << '\n' << m << endl;
 	for (int i = 1; i <= m; i++) {
 		for (int j = 1; j <= n; j++) {
-			cout << mt() % 3 - 1 << ' ';
+			int temp = (mt() % 3);
+			cout << temp - 1 << ' ';
 		}cout << endl;
 	}
 }
 
 signed main() {
-	string stdEXEPath = "D:\\11111\\repos\\ConsoleApplication3\\x64\\Debug\\ConsoleApplication4.exe";
+	string stdEXEPath = "D:\\11111\\repos\\ConsoleApplication4\\x64\\Debug\\ConsoleApplication4.exe";
 	//stdEXEPath是标程在电脑上的全路径
 	string testPath = "D:/input/";
 	//testPath是生成数据的全路径

@@ -47,7 +47,7 @@ protected:
 		}
 		std::string fname = ".in";
 		if (!__IS_INPUT_FILE)fname = ".out";
-		fname = s + fname + '\0';
+		fname = s + fname;
 		return testPath + fname;
 	}
 
@@ -168,8 +168,8 @@ protected:
 		std::cerr << __OUTPUT_FILE__ << " :make begin" << std::endl;
 		auto tcmd = cmd;
 		//cmd字符串为std程序的全路径
-		tcmd += " <" + __INPUT_FILE__;
-		tcmd += " >" + __OUTPUT_FILE__;
+		tcmd += " < " + __INPUT_FILE__;
+		tcmd += " > " + __OUTPUT_FILE__;
 		int returnNum = system(tcmd.c_str());
 		if (returnNum) {
 			//调用标程时出现错误，抛出异常
