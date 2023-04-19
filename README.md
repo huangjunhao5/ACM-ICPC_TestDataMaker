@@ -11,6 +11,20 @@
 
 下面说明DataMaker.h中一些类的用法：
 
+# DataMakerFromCppSourceFile
+
+继承自DataMakerFromEXE类，用于加载C++源文件，使用std源文件生成数据
+
+此类生成数据时，必须传入数据生成的方法，默认使用程序所在路径下的/std/std.cpp生成数据
+
+生成的数据默认存放在程序目录下的/data/文件夹下
+
+使用前，应该确保电脑上有GNU C++、Apple Clang++（LLVM工具链）或者Visual C++的环境变量，并且能正确通过shell编译C++程序
+
+如果要使用非环境变量下的编译器或者环境变量未配置编译器，请在创建对象完成后手动设置编译器路径
+
+默认优先使用g++/clang++， 若g++/clang++不存在将尝试使用Visual C++
+
 # DataMaker
 所有数据生成器的父类，是一个抽象类，不能实例化为对象。
 
