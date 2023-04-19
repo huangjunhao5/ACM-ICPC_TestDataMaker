@@ -2,7 +2,12 @@
 #include <string>
 #include <iostream>
 #include <cstdlib>
-
+#include <iostream>
+#ifdef _WIN32
+#include <direct.h>
+#elif __APPLE__ || __linux__
+#include<unistd.h>
+#endif
 
 
 // 抽象类DataMaker：未实现make函数和run函数，需要重写make函数和run函数
@@ -271,6 +276,15 @@ protected:
 
     std::string cppSourcePath;
 
+    int cppVersion = 17;
+public:
+    int getCppVersion() const {
+        return cppVersion;
+    }
+
+    void setCppVersion(int cppVersion) {
+        DataMakerFromCppSourceFile::cppVersion = cppVersion;
+    }
 
 public:
     const std::string &getGccCompilePath() const {
@@ -326,17 +340,24 @@ protected:
         else {
             compileCmd = vcCompile;
         }
-        compileCmd += " " + cppSourcePath;
+        std::cerr << "Use C++ Compile: " << compileCmd << " ,C++ Version : C++ " << cppVersion << std::endl;
+        compileCmd += " " + stdSourceFilePath + " -std=c++" + std::to_string(cppVersion);
         compileCpp(compileCmd);
     }
 
     void compileCpp(std::string cmd, std::string path = "a.exe"){
         int code = system((cmd + " -o " + path).c_str());
-        if(!code){
+        std::cerr << "Compile Code: " << cmd + " -o " + path << std::endl;
+        std::cerr << "Compile Code: " << code << std::endl;
+
+        if(code){
             std::cerr << "Compile Error, Error code = " + code << std::endl;
             throw new std::runtime_error("Compile Error, Error code = " + code);
         }
-        DataMakerFromEXE::setstdEXEPath(path);
+        char runPath[1024] = {0};
+        getcwd(runPath, sizeof(runPath));
+        std::string nowPath = runPath;
+        DataMakerFromEXE::setstdEXEPath(nowPath + "/" + path);
     }
 
     virtual void make(int __test_num) override {
@@ -355,6 +376,10 @@ protected:
 
         std::cerr << "Test" << __test_num << " :make done!" << std::endl;
         std::cerr << std::endl;
+    }
+    virtual void run() override{
+        compileCppFile(cppSourcePath);
+        DataMakerFromEXE::run();
     }
 public:
     DataMakerFromCppSourceFile(){
@@ -380,22 +405,22 @@ public:
     DataMakerFromCppSourceFile(MakeTestFun func, std::string path, int testNum = 12) : DataMakerFromEXE(path, func, testNum) {
         autoCompilePath();
     }
-    DataMakerFromCppSourceFile(std::string stdCppSource, std::string path, MakeTestFun func, int testNum = 12) : DataMakerFromEXE(path,func,testNum) {
+    DataMakerFromCppSourceFile(std::string stdCppSource, std::string path, MakeTestFun func, int testNum = 12) : DataMakerFromEXE(path,func,testNum),cppSourcePath(stdCppSource) {
         autoCompilePath();
     }
-    DataMakerFromCppSourceFile(std::string stdCppSource,std::string path, int testNum, MakeTestFun func) : DataMakerFromEXE(path, func, testNum) {
+    DataMakerFromCppSourceFile(std::string stdCppSource,std::string path, int testNum, MakeTestFun func) : DataMakerFromEXE(path, func, testNum),cppSourcePath(stdCppSource) {
         autoCompilePath();
     }
-    DataMakerFromCppSourceFile(std::string stdCppSource,int testNum, std::string path, MakeTestFun func) : DataMakerFromEXE(path, func, testNum) {
+    DataMakerFromCppSourceFile(std::string stdCppSource,int testNum, std::string path, MakeTestFun func) : DataMakerFromEXE(path, func, testNum),cppSourcePath(stdCppSource) {
         autoCompilePath();
     }
-    DataMakerFromCppSourceFile(std::string stdCppSource,int testNum, MakeTestFun func, std::string path) : DataMakerFromEXE(path, func, testNum) {
+    DataMakerFromCppSourceFile(std::string stdCppSource,int testNum, MakeTestFun func, std::string path) : DataMakerFromEXE(path, func, testNum),cppSourcePath(stdCppSource) {
         autoCompilePath();
     }
-    DataMakerFromCppSourceFile(std::string stdCppSource,MakeTestFun func, int testNum, std::string path) : DataMakerFromEXE(path, func, testNum) {
+    DataMakerFromCppSourceFile(std::string stdCppSource,MakeTestFun func, int testNum, std::string path) : DataMakerFromEXE(path, func, testNum),cppSourcePath(stdCppSource) {
         autoCompilePath();
     }
-    DataMakerFromCppSourceFile(std::string stdCppSource,MakeTestFun func, std::string path, int testNum = 12) : DataMakerFromEXE(path, func, testNum) {
+    DataMakerFromCppSourceFile(std::string stdCppSource,MakeTestFun func, std::string path, int testNum = 12) : DataMakerFromEXE(path, func, testNum),cppSourcePath(stdCppSource) {
         autoCompilePath();
     }
 };
@@ -404,7 +429,7 @@ public:
 //unable to test
 class DataMakerFromSourceText :public DataMakerFromCppSourceFile{
 public:
-    
+
 protected:
     std::string source;
 public:
