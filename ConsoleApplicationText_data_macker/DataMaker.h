@@ -7,8 +7,19 @@
 #include <direct.h>
 #elif __APPLE__ || __linux__
 #include<unistd.h>
+#include <sys/stat.h>
+#include <stdint.h>
 #endif
 
+#define MAX_PATH_LEN 256
+
+#ifdef WIN32
+#define ACCESS(fileName,accessMode) _access(fileName,accessMode)
+#define MKDIR(path) _mkdir(path)
+#else
+#define ACCESS(fileName,accessMode) access(fileName,accessMode)
+#define MKDIR(path) mkdir(path,S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH)
+#endif
 
 // 抽象类DataMaker：未实现make函数和run函数，需要重写make函数和run函数
 // make函数编写说明：传入一个参数，为当前制造的数据编号（第几组数据）
@@ -19,11 +30,11 @@
 // run函数需要进行基本的运行判断，判断生成数据的必要参数是否具备
 // 否则抛出异常
 // 如果使用无参构造函数，将使用默认的生成参数设置
-// 数据生成的路径：D:/input/
+// 数据生成的路径：程序目录下的/data/文件夹下
 // 数据的组数：12
 // 默认的数据生成函数不提供，如果没有传入数据生成函数，将抛出异常
 
-const std::string DEFAULT_PATH = "./data/";
+std::string DEFAULT_PATH = "";
 const int DEFAULT_TEST_CASE = 12;
 
 class DataMaker
@@ -32,6 +43,7 @@ protected:
     typedef void (*MakeTestFun)(int testcase);
     std::string testcasePath = "";
     MakeTestFun testMakeFunction = nullptr;
+protected:
     int testNum = 12;
 
     bool ignoreMakeInputDataError = 0;
@@ -62,11 +74,11 @@ protected:
 
     //使用fun函数构造数据
     void makeInFile(std::string __INPUT_FILE__ ,int __test_num) {
-        std::cerr << __INPUT_FILE__ << " :make begin" << std::endl;
+        std::clog << __INPUT_FILE__ << " :make begin" << std::endl;
         auto it = freopen(__INPUT_FILE__.c_str(), "w", stdout);
         if (it == nullptr) {
             //输入文件打开失败，抛出异常
-            std::cerr << __INPUT_FILE__ << " make error : can't open file path" << __INPUT_FILE__ << std::endl;
+            std::clog << __INPUT_FILE__ << " make error : can't open file path" << __INPUT_FILE__ << std::endl;
             if(!ignoreMakeInputDataError){
                 throw std::runtime_error("InputFileMakeError:make input file error!");
             }
@@ -77,25 +89,34 @@ protected:
             testMakeFunction(__test_num);
         }
         fclose(stdout);
-        std::cerr << __INPUT_FILE__ << " :make done" << std::endl;
+        std::clog << __INPUT_FILE__ << " :make done" << std::endl;
     }
 
     virtual void make(int __test_num) = 0;
 public:
     virtual void run() = 0;
+    void getNowPath(){
+        char runPath[1024] = {0};
+        getcwd(runPath, sizeof(runPath));
+        DEFAULT_PATH = runPath;
+//        DEFAULT_PATH += "/data/";
+        MKDIR((DEFAULT_PATH + "/data/").c_str());
+    }
     virtual void defaultPathSet() {
-        testcasePath = DEFAULT_PATH;
+        getNowPath();
+        testcasePath = DEFAULT_PATH + "/data/";
         testNum = DEFAULT_TEST_CASE;
     }
     DataMaker() { defaultPathSet(); }
+    DataMaker(MakeTestFun makeTestFun) :testMakeFunction(makeTestFun) {defaultPathSet();}
     //构造函数：提供无参构造函数，有参构造函数有3个参数,参数位置随意
     //可以省略测试数据个数，默认为12组数据
-    DataMaker(std::string path, MakeTestFun func, int testNum = 12) : testcasePath(path), testMakeFunction(func), testNum(testNum) {}
-    DataMaker(std::string path, int testNum, MakeTestFun func) : testcasePath(path), testMakeFunction(func), testNum(testNum) {}
-    DataMaker(int testNum, std::string path, MakeTestFun func) : testcasePath(path), testMakeFunction(func), testNum(testNum) {}
-    DataMaker(int testNum, MakeTestFun func, std::string path) : testcasePath(path), testMakeFunction(func), testNum(testNum) {}
-    DataMaker(MakeTestFun func, int testNum, std::string path) : testcasePath(path), testMakeFunction(func), testNum(testNum) {}
-    DataMaker(MakeTestFun func, std::string path, int testNum = 12) : testcasePath(path), testMakeFunction(func), testNum(testNum) {}
+    DataMaker(std::string path, MakeTestFun func, int testNum = 12) : testcasePath(path), testMakeFunction(func), testNum(testNum) {getNowPath();}
+    DataMaker(std::string path, int testNum, MakeTestFun func) : testcasePath(path), testMakeFunction(func), testNum(testNum) {getNowPath();}
+    DataMaker(int testNum, std::string path, MakeTestFun func) : testcasePath(path), testMakeFunction(func), testNum(testNum) {getNowPath();}
+    DataMaker(int testNum, MakeTestFun func, std::string path) : testcasePath(path), testMakeFunction(func), testNum(testNum) {getNowPath();}
+    DataMaker(MakeTestFun func, int testNum, std::string path) : testcasePath(path), testMakeFunction(func), testNum(testNum) {getNowPath();}
+    DataMaker(MakeTestFun func, std::string path, int testNum = 12) : testcasePath(path), testMakeFunction(func), testNum(testNum) {getNowPath();}
 
     void setPath(std::string path) {
         this->testcasePath = path;
@@ -117,13 +138,14 @@ public:
 
 
 // SpecialJudgeDataMaker：继承自DataMaker类，用于实现生成SpecialJudge题目的数据
-// 此类生成数据时，必须要传入数据生成方法（生成函数）和数据生成路径
+// 此类生成数据时，必须要传入数据生成方法
+// 生成的数据默认存放在程序目录下的/data/文件夹下
 // 如果不忽略数据生成异常，默认在数据生成错误时抛出异常中断程序
 // 如果使用无参构造函数，将使用默认配置
 class SpecialJudgeDataMaker :public DataMaker {
 protected:
     virtual void make(int __test_num) override {
-        std::cerr << "Test" << __test_num << " :make begin" << std::endl;
+        std::clog << "Test" << __test_num << " :make begin" << std::endl;
         std::string __INPUT_FILE__ = fileNameMaker(__test_num, testcasePath, 1);
 
         makeInFile(__INPUT_FILE__, __test_num);
@@ -132,10 +154,10 @@ protected:
         //Special Judge不产生.out文件，将跳过输出数据生成
         //使用std标程重定向到文件输出.out文件
 
-        std::cerr << "Special Judge Test , Skip OutputFile Create !" << std::endl;
+        std::clog << "Special Judge Test , Skip OutputFile Create !" << std::endl;
 
-        std::cerr << "Test" << __test_num << " :make done!" << std::endl;
-        std::cerr << std::endl;
+        std::clog << "Test" << __test_num << " :make done!" << std::endl;
+        std::clog << std::endl;
     }
 public:
     virtual void run() override {
@@ -145,7 +167,7 @@ public:
         for (int i = 1; i <= testNum; i++) {
             make(i);
         }
-        std::cerr << "All TestCases make done!" << std::endl;
+        std::clog << "All TestCases make done!" << std::endl;
     }
 
     virtual void defaultPathSet() override {
@@ -156,17 +178,18 @@ public:
     //继承父类构造函数，不提供新的构造函数（不需要新构造函数）
     //构造函数：提供无参构造函数，有参构造函数有3个参数,参数位置随意
     //可以省略测试数据个数，默认为12组数据
-    SpecialJudgeDataMaker(std::string path, MakeTestFun func, int testNum = 12) : DataMaker(path, func, testNum) {}
-    SpecialJudgeDataMaker(std::string path, int testNum, MakeTestFun func) : DataMaker(path, func, testNum) {}
-    SpecialJudgeDataMaker(int testNum, std::string path, MakeTestFun func) : DataMaker(path, func, testNum) {}
-    SpecialJudgeDataMaker(int testNum, MakeTestFun func, std::string path) : DataMaker(path, func, testNum) {}
-    SpecialJudgeDataMaker(MakeTestFun func, int testNum, std::string path) : DataMaker(path, func, testNum) {}
-    SpecialJudgeDataMaker(MakeTestFun func, std::string path, int testNum = 12) : DataMaker(path, func, testNum) {}
+    SpecialJudgeDataMaker(std::string path, MakeTestFun func, int testNum = 12) : DataMaker(path, func, testNum) {getNowPath();}
+    SpecialJudgeDataMaker(std::string path, int testNum, MakeTestFun func) : DataMaker(path, func, testNum) {getNowPath();}
+    SpecialJudgeDataMaker(int testNum, std::string path, MakeTestFun func) : DataMaker(path, func, testNum) {getNowPath();}
+    SpecialJudgeDataMaker(int testNum, MakeTestFun func, std::string path) : DataMaker(path, func, testNum) {getNowPath();}
+    SpecialJudgeDataMaker(MakeTestFun func, int testNum, std::string path) : DataMaker(path, func, testNum) {getNowPath();}
+    SpecialJudgeDataMaker(MakeTestFun func, std::string path, int testNum = 12) : DataMaker(path, func, testNum) {getNowPath();}
 };
 
 
 // DataMakerFromEXE：继承自DataMaker类，用于实现生成数据，使用std可执行文件生成数据
-// 此类生成数据时，必须要传入数据生成方法（生成函数）、std可执行文件的全路径和数据生成路径
+// 此类生成数据时，必须要传入数据生成方法，默认使用程序所在路径下的/std/std.cpp生成数据
+// 生成的数据默认存放在程序目录下的/data/文件夹下
 // 如果不忽略数据生成异常，默认在数据生成错误时抛出异常中断程序
 class DataMakerFromEXE :public DataMaker {
 protected:
@@ -174,7 +197,7 @@ protected:
 
     //使用标程的EXE文件构造数据
     void makeOutFileEXE(std::string __INPUT_FILE__, std::string __OUTPUT_FILE__, int __test_num) {
-        std::cerr << __OUTPUT_FILE__ << " :make begin" << std::endl;
+        std::clog << __OUTPUT_FILE__ << " :make begin" << std::endl;
         auto tcmd = cmd;
         //cmd字符串为std程序的全路径
         tcmd += " < " + __INPUT_FILE__;
@@ -182,18 +205,18 @@ protected:
         int returnNum = system(tcmd.c_str());
         if (returnNum) {
             //调用标程时出现错误，抛出异常
-            std::cerr << __OUTPUT_FILE__ << " :make failed , error num = " << returnNum << std::endl;
+            std::clog << __OUTPUT_FILE__ << " :make failed , error num = " << returnNum << std::endl;
             if (!ignoreMakeOutputDataError) {
                 throw std::runtime_error("OutputFileMakeError:make output file error!");
             }
         }
         else {
-            std::cerr << __OUTPUT_FILE__ << " :make done" << std::endl;
+            std::clog << __OUTPUT_FILE__ << " :make done" << std::endl;
         }
     }
 
     virtual void make(int __test_num) override {
-        std::cerr << "Test" << __test_num << " :make begin" << std::endl;
+        std::clog << "Test" << __test_num << " :make begin" << std::endl;
         std::string __INPUT_FILE__ = fileNameMaker(__test_num, testcasePath, 1);
         std::string __OUTPUT_FILE__ = fileNameMaker(__test_num, testcasePath, 0);
 
@@ -206,8 +229,8 @@ protected:
 
         //使用std标程重定向到文件输出.out文件
 
-        std::cerr << "Test" << __test_num << " :make done!" << std::endl;
-        std::cerr << std::endl;
+        std::clog << "Test" << __test_num << " :make done!" << std::endl;
+        std::clog << std::endl;
     }
 
 public:
@@ -219,12 +242,13 @@ public:
         for (int i = 1; i <= testNum; i++) {
             make(i);
         }
-        std::cerr << "All TestCases make done!" << std::endl;
+        std::clog << "All TestCases make done!" << std::endl;
     }
 
     virtual void defaultPathSet() override {
         DataMaker::defaultPathSet();
-        cmd = DEFAULT_PATH;
+        MKDIR((DEFAULT_PATH + "/std/").c_str());
+        cmd = DEFAULT_PATH + "/std/a.exe";
     }
 
     void setstdEXEPath(std::string stdEXEPath) {
@@ -232,6 +256,7 @@ public:
     }
 
     DataMakerFromEXE() { this->defaultPathSet(); }
+    DataMakerFromEXE(MakeTestFun makeTestFun): DataMaker(makeTestFun){this->defaultPathSet();}
     //构造函数：提供无参构造函数，有参构造函数有4个参数，第一个参数必须为std程序的路径，其余参数随意
     //可以省略测试数据个数，默认为12组数据
     DataMakerFromEXE(std::string stdEXEPath, std::string path, MakeTestFun func, int testNum = 12) : DataMaker(path,func,testNum) {
@@ -265,7 +290,9 @@ public:
 };
 
 
-//unable to test
+// DataMakerFromCppSourceFile: 继承自DataMakerFromEXE类，用于加载C++源文件，使用std源文件生成数据
+// 此类生成数据时，必须传入数据生成的方法，默认使用程序所在路径下的/std/std.cpp生成数据
+// 生成的数据默认存放在程序目录下的/data/文件夹下
 class DataMakerFromCppSourceFile :public DataMakerFromEXE {
 protected:
     // cmd为c++源文件路径
@@ -303,11 +330,11 @@ public:
         DataMakerFromCppSourceFile::vcCompile = vcCompile;
     }
 
-    const std::string &getCppSourcePah() const {
+    const std::string &getCppSourcePath() const {
         return cppSourcePath;
     }
 
-    void setCppSourcePah(const std::string &cppSourcePah) {
+    void setCppSourcePath(const std::string &cppSourcePah) {
         DataMakerFromCppSourceFile::cppSourcePath = cppSourcePah;
     }
 
@@ -326,11 +353,11 @@ protected:
 
     void compileCppFile(std::string stdSourceFilePath) {
         if (gccCompilePath == "" && vcCompile == "") {
-            std::cerr << "compile path not set,system will auto get comple path" << std::endl;
+            std::clog << "compile path not set,system will auto get comple path" << std::endl;
             autoCompilePath();
         }
         if (gccCompilePath == "" && vcCompile == "") {
-            std::cerr << "compile error : system can't get comple path" << std::endl;
+            std::clog << "compile error : system can't get comple path" << std::endl;
             throw std::runtime_error("NoCompilePathError:system path has no comile path");
         }
         std::string compileCmd;
@@ -340,52 +367,55 @@ protected:
         else {
             compileCmd = vcCompile;
         }
-        std::cerr << "Use C++ Compile: " << compileCmd << " ,C++ Version : C++ " << cppVersion << std::endl;
+        std::clog << "Use C++ Compile: " << compileCmd << " ,C++ Version : C++ " << cppVersion << std::endl;
         compileCmd += " " + stdSourceFilePath + " -std=c++" + std::to_string(cppVersion);
         compileCpp(compileCmd);
     }
 
-    void compileCpp(std::string cmd, std::string path = "a.exe"){
+    void compileCpp(std::string cmd, std::string path = DEFAULT_PATH + "/std/a.exe"){
         int code = system((cmd + " -o " + path).c_str());
-        std::cerr << "Compile Code: " << cmd + " -o " + path << std::endl;
-        std::cerr << "Compile Code: " << code << std::endl;
+        std::clog << "Compile Code: " << cmd + " -o " + path << std::endl;
+        std::clog << "Compile Code: " << code << std::endl;
 
         if(code){
-            std::cerr << "Compile Error, Error code = " + code << std::endl;
+            std::clog << "Compile Error, Error code = " + code << std::endl;
             throw new std::runtime_error("Compile Error, Error code = " + code);
         }
-        char runPath[1024] = {0};
-        getcwd(runPath, sizeof(runPath));
-        std::string nowPath = runPath;
-        DataMakerFromEXE::setstdEXEPath(nowPath + "/" + path);
+//        char runPath[1024] = {0};
+//        getcwd(runPath, sizeof(runPath));
+//        std::string nowPath = runPath;
+        DataMakerFromEXE::setstdEXEPath(path);
     }
 
     virtual void make(int __test_num) override {
-        std::cerr << "Test" << __test_num << " :make begin" << std::endl;
-        std::string __INPUT_FILE__ = fileNameMaker(__test_num, testcasePath, 1);
-        std::string __OUTPUT_FILE__ = fileNameMaker(__test_num, testcasePath, 0);
-
-        makeInFile(__INPUT_FILE__, __test_num);
-        //std解法
-
-        //Special Judge不产生.out文件，将跳过输出数据生成
-        //如果不是SpecialJudge，生成.out文件
-        makeOutFileEXE(__INPUT_FILE__, __OUTPUT_FILE__, __test_num);
-
-        //使用std标程重定向到文件输出.out文件
-
-        std::cerr << "Test" << __test_num << " :make done!" << std::endl;
-        std::cerr << std::endl;
+        DataMakerFromEXE::make(__test_num);
     }
     virtual void run() override{
         compileCppFile(cppSourcePath);
+        std::clog << std::endl;
+        std::clog << std::endl;
         DataMakerFromEXE::run();
     }
+    void loadDefault(){
+        setCppSourcePath(DEFAULT_PATH + "/std/std.cpp");
+        std::clog << "Use default std C++ Source :" + DEFAULT_PATH + "/std/std.cpp" <<std::endl;
+    }
 public:
-    DataMakerFromCppSourceFile(){
+    DataMakerFromCppSourceFile(): DataMakerFromEXE(){
         autoCompilePath();
+        loadDefault();
     }
 
+    DataMakerFromCppSourceFile(MakeTestFun makeTestFun): DataMakerFromEXE(makeTestFun){
+        autoCompilePath();
+        loadDefault();
+    }
+
+    DataMakerFromCppSourceFile(std::string cppSource): DataMakerFromEXE(){
+        setCppSourcePath(cppSource);
+        std::clog<< "path:" + cppSourcePath << std::endl;
+        autoCompilePath();
+    }
     //继承父类构造函数
     DataMakerFromCppSourceFile(std::string path, MakeTestFun func, int testNum = 12) : DataMakerFromEXE(path,func,testNum) {
         autoCompilePath();
@@ -425,6 +455,8 @@ public:
     }
 };
 
+// unable to test
+class JudgeSubmit :public DataMakerFromCppSourceFile{};
 
 //unable to test
 class DataMakerFromSourceText :public DataMakerFromCppSourceFile{
