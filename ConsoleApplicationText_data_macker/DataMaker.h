@@ -5,310 +5,415 @@
 
 
 
-// ³éÏóÀàDataMaker£ºÎ´ÊµÏÖmakeº¯ÊıºÍrunº¯Êı£¬ĞèÒªÖØĞ´makeº¯ÊıºÍrunº¯Êı
-// makeº¯Êı±àĞ´ËµÃ÷£º´«ÈëÒ»¸ö²ÎÊı£¬Îªµ±Ç°ÖÆÔìµÄÊı¾İ±àºÅ£¨µÚ¼¸×éÊı¾İ£©
-// µ÷ÓÃÊı¾İÂ·¾¶Éú³Éº¯ÊıÉú³É²âÊÔÊı¾İµÄÈ«Â·¾¶£¨°üÀ¨.inÎÄ¼şºÍ.outÎÄ¼ş£¬1Îªin£¬0Îªout£©
-// È»ºóÊ¹ÓÃfreopen´ò¿ª²âÊÔÊı¾İÎÄ¼ş
-// ÔÙµ÷ÓÃ´«ÈëµÄfunº¯ÊıÉú³ÉÊı¾İ
-// funº¯Êı¿ÉÒÔÊ¹ÓÃcout¹¹ÔìÊı¾İ
-// runº¯ÊıĞèÒª½øĞĞ»ù±¾µÄÔËĞĞÅĞ¶Ï£¬ÅĞ¶ÏÉú³ÉÊı¾İµÄ±ØÒª²ÎÊıÊÇ·ñ¾ß±¸
-// ·ñÔòÅ×³öÒì³£
-// Èç¹ûÊ¹ÓÃÎŞ²Î¹¹Ôìº¯Êı£¬½«Ê¹ÓÃÄ¬ÈÏµÄÉú³É²ÎÊıÉèÖÃ
-// Êı¾İÉú³ÉµÄÂ·¾¶£ºD:/input/
-// Êı¾İµÄ×éÊı£º12
-// Ä¬ÈÏµÄÊı¾İÉú³Éº¯Êı²»Ìá¹©£¬Èç¹ûÃ»ÓĞ´«ÈëÊı¾İÉú³Éº¯Êı£¬½«Å×³öÒì³£
+// æŠ½è±¡ç±»DataMakerï¼šæœªå®ç°makeå‡½æ•°å’Œrunå‡½æ•°ï¼Œéœ€è¦é‡å†™makeå‡½æ•°å’Œrunå‡½æ•°
+// makeå‡½æ•°ç¼–å†™è¯´æ˜ï¼šä¼ å…¥ä¸€ä¸ªå‚æ•°ï¼Œä¸ºå½“å‰åˆ¶é€ çš„æ•°æ®ç¼–å·ï¼ˆç¬¬å‡ ç»„æ•°æ®ï¼‰
+// è°ƒç”¨æ•°æ®è·¯å¾„ç”Ÿæˆå‡½æ•°ç”Ÿæˆæµ‹è¯•æ•°æ®çš„å…¨è·¯å¾„ï¼ˆåŒ…æ‹¬.inæ–‡ä»¶å’Œ.outæ–‡ä»¶ï¼Œ1ä¸ºinï¼Œ0ä¸ºoutï¼‰
+// ç„¶åä½¿ç”¨freopenæ‰“å¼€æµ‹è¯•æ•°æ®æ–‡ä»¶
+// å†è°ƒç”¨ä¼ å…¥çš„funå‡½æ•°ç”Ÿæˆæ•°æ®
+// funå‡½æ•°å¯ä»¥ä½¿ç”¨coutæ„é€ æ•°æ®
+// runå‡½æ•°éœ€è¦è¿›è¡ŒåŸºæœ¬çš„è¿è¡Œåˆ¤æ–­ï¼Œåˆ¤æ–­ç”Ÿæˆæ•°æ®çš„å¿…è¦å‚æ•°æ˜¯å¦å…·å¤‡
+// å¦åˆ™æŠ›å‡ºå¼‚å¸¸
+// å¦‚æœä½¿ç”¨æ— å‚æ„é€ å‡½æ•°ï¼Œå°†ä½¿ç”¨é»˜è®¤çš„ç”Ÿæˆå‚æ•°è®¾ç½®
+// æ•°æ®ç”Ÿæˆçš„è·¯å¾„ï¼šD:/input/
+// æ•°æ®çš„ç»„æ•°ï¼š12
+// é»˜è®¤çš„æ•°æ®ç”Ÿæˆå‡½æ•°ä¸æä¾›ï¼Œå¦‚æœæ²¡æœ‰ä¼ å…¥æ•°æ®ç”Ÿæˆå‡½æ•°ï¼Œå°†æŠ›å‡ºå¼‚å¸¸
+
+const std::string DEFAULT_PATH = "./data/";
+const int DEFAULT_TEST_CASE = 12;
+
 class DataMaker
 {
 protected:
-	typedef void (*MakeTestFun)(int testcase);
-	std::string testcasePath = "";	
-	MakeTestFun testMakeFunction = nullptr;
-	int testNum = 12;
-	
-	bool ignoreMakeInputDataError = 0;
+    typedef void (*MakeTestFun)(int testcase);
+    std::string testcasePath = "";
+    MakeTestFun testMakeFunction = nullptr;
+    int testNum = 12;
 
-	bool ignoreMakeOutputDataError = 0;
+    bool ignoreMakeInputDataError = 0;
 
-	// ¹¹ÔìËùĞèÎÄ¼şµÄÈ«Â·¾¶£¬Èç¹ûÎ´Ö¸¶¨Â·¾¶£¬Å×³öÒì³£
-	std::string fileNameMaker(int name, std::string testPath, bool __IS_INPUT_FILE) {
-		if (testPath == "")throw std::runtime_error("NoFilePathError:You are not set file path!");
-		char ts[1000];
-		int tf = name;
-		int len = 0;
-		memset(ts, 0, sizeof(ts));
-		while (tf) {
-			ts[++len] = tf % 10 + '0';
-			tf /= 10;
-		}
-		char s[1000];
-		memset(s, 0, sizeof(s));
-		for (int i = 1; i <= strlen(ts + 1); i++) {
-			s[len - i] = ts[i];
-		}
-		std::string fname = ".in";
-		if (!__IS_INPUT_FILE)fname = ".out";
-		fname = s + fname;
-		return testPath + fname;
-	}
+    bool ignoreMakeOutputDataError = 0;
 
-	//Ê¹ÓÃfunº¯Êı¹¹ÔìÊı¾İ
-	void makeInFile(std::string __INPUT_FILE__ ,int __test_num) {
-		std::cerr << __INPUT_FILE__ << " :make begin" << std::endl;
-		auto it = freopen(__INPUT_FILE__.c_str(), "w", stdout);
-		if (it == nullptr) {
-			//ÊäÈëÎÄ¼ş´ò¿ªÊ§°Ü£¬Å×³öÒì³£
-			std::cerr << __INPUT_FILE__ << " make error : can't open file path" << __INPUT_FILE__ << std::endl;
-			if(!ignoreMakeInputDataError){
-				throw std::runtime_error("InputFileMakeError:make input file error!");
-			}
-			return;
-		}
-		{
-			//ÔÚÕâÀï¹¹ÔìÊı¾İ
-			testMakeFunction(__test_num);
-		}
-		fclose(stdout);
-		std::cerr << __INPUT_FILE__ << " :make done" << std::endl;
-	}
+    // æ„é€ æ‰€éœ€æ–‡ä»¶çš„å…¨è·¯å¾„ï¼Œå¦‚æœæœªæŒ‡å®šè·¯å¾„ï¼ŒæŠ›å‡ºå¼‚å¸¸
+    std::string fileNameMaker(int name, std::string testPath, bool __IS_INPUT_FILE) {
+        if (testPath == "")throw std::runtime_error("NoFilePathError:You are not set file path!");
+        char ts[1000];
+        int tf = name;
+        int len = 0;
+        memset(ts, 0, sizeof(ts));
+        while (tf) {
+            ts[++len] = tf % 10 + '0';
+            tf /= 10;
+        }
+        char s[1000];
+        memset(s, 0, sizeof(s));
+        for (int i = 1; i <= strlen(ts + 1); i++) {
+            s[len - i] = ts[i];
+        }
+        std::string fname = ".in";
+        if (!__IS_INPUT_FILE)fname = ".out";
+        fname = s + fname;
+        return testPath + fname;
+    }
 
-	virtual void make(int __test_num) = 0;
+    //ä½¿ç”¨funå‡½æ•°æ„é€ æ•°æ®
+    void makeInFile(std::string __INPUT_FILE__ ,int __test_num) {
+        std::cerr << __INPUT_FILE__ << " :make begin" << std::endl;
+        auto it = freopen(__INPUT_FILE__.c_str(), "w", stdout);
+        if (it == nullptr) {
+            //è¾“å…¥æ–‡ä»¶æ‰“å¼€å¤±è´¥ï¼ŒæŠ›å‡ºå¼‚å¸¸
+            std::cerr << __INPUT_FILE__ << " make error : can't open file path" << __INPUT_FILE__ << std::endl;
+            if(!ignoreMakeInputDataError){
+                throw std::runtime_error("InputFileMakeError:make input file error!");
+            }
+            return;
+        }
+        {
+            //åœ¨è¿™é‡Œæ„é€ æ•°æ®
+            testMakeFunction(__test_num);
+        }
+        fclose(stdout);
+        std::cerr << __INPUT_FILE__ << " :make done" << std::endl;
+    }
+
+    virtual void make(int __test_num) = 0;
 public:
-	virtual void run() = 0;
-	virtual void defaultPathSet() {
-		testcasePath = "D:/input/";
-		testNum = 12;
-	}
-	DataMaker() { defaultPathSet(); }
-	//¹¹Ôìº¯Êı£ºÌá¹©ÎŞ²Î¹¹Ôìº¯Êı£¬ÓĞ²Î¹¹Ôìº¯ÊıÓĞ3¸ö²ÎÊı,²ÎÊıÎ»ÖÃËæÒâ
-	//¿ÉÒÔÊ¡ÂÔ²âÊÔÊı¾İ¸öÊı£¬Ä¬ÈÏÎª12×éÊı¾İ
-	DataMaker(std::string path, MakeTestFun func, int testNum = 12) : testcasePath(path), testMakeFunction(func), testNum(testNum) {}
-	DataMaker(std::string path, int testNum, MakeTestFun func) : testcasePath(path), testMakeFunction(func), testNum(testNum) {}
-	DataMaker(int testNum, std::string path, MakeTestFun func) : testcasePath(path), testMakeFunction(func), testNum(testNum) {}
-	DataMaker(int testNum, MakeTestFun func, std::string path) : testcasePath(path), testMakeFunction(func), testNum(testNum) {}
-	DataMaker(MakeTestFun func, int testNum, std::string path) : testcasePath(path), testMakeFunction(func), testNum(testNum) {}
-	DataMaker(MakeTestFun func, std::string path, int testNum = 12) : testcasePath(path), testMakeFunction(func), testNum(testNum) {}
+    virtual void run() = 0;
+    virtual void defaultPathSet() {
+        testcasePath = DEFAULT_PATH;
+        testNum = DEFAULT_TEST_CASE;
+    }
+    DataMaker() { defaultPathSet(); }
+    //æ„é€ å‡½æ•°ï¼šæä¾›æ— å‚æ„é€ å‡½æ•°ï¼Œæœ‰å‚æ„é€ å‡½æ•°æœ‰3ä¸ªå‚æ•°,å‚æ•°ä½ç½®éšæ„
+    //å¯ä»¥çœç•¥æµ‹è¯•æ•°æ®ä¸ªæ•°ï¼Œé»˜è®¤ä¸º12ç»„æ•°æ®
+    DataMaker(std::string path, MakeTestFun func, int testNum = 12) : testcasePath(path), testMakeFunction(func), testNum(testNum) {}
+    DataMaker(std::string path, int testNum, MakeTestFun func) : testcasePath(path), testMakeFunction(func), testNum(testNum) {}
+    DataMaker(int testNum, std::string path, MakeTestFun func) : testcasePath(path), testMakeFunction(func), testNum(testNum) {}
+    DataMaker(int testNum, MakeTestFun func, std::string path) : testcasePath(path), testMakeFunction(func), testNum(testNum) {}
+    DataMaker(MakeTestFun func, int testNum, std::string path) : testcasePath(path), testMakeFunction(func), testNum(testNum) {}
+    DataMaker(MakeTestFun func, std::string path, int testNum = 12) : testcasePath(path), testMakeFunction(func), testNum(testNum) {}
 
-	void setPath(std::string path) {
-		this->testcasePath = path;
-	}
-	void setTestNum(int num) {
-		this->testNum = num;
-	}
-	void setMakeTestFunc(MakeTestFun func) {
-		this->testMakeFunction = func;
-	}
+    void setPath(std::string path) {
+        this->testcasePath = path;
+    }
+    void setTestNum(int num) {
+        this->testNum = num;
+    }
+    void setMakeTestFunc(MakeTestFun func) {
+        this->testMakeFunction = func;
+    }
 
-	void setignoreMakeInputDataError(bool model) {
-		this->ignoreMakeInputDataError = model;
-	}
-	void setignoreMakeOutputDataError(bool model) {
-		this->ignoreMakeOutputDataError = model;
-	}
+    void setignoreMakeInputDataError(bool model) {
+        this->ignoreMakeInputDataError = model;
+    }
+    void setignoreMakeOutputDataError(bool model) {
+        this->ignoreMakeOutputDataError = model;
+    }
 };
 
 
-// SpecialJudgeDataMaker£º¼Ì³Ğ×ÔDataMakerÀà£¬ÓÃÓÚÊµÏÖÉú³ÉSpecialJudgeÌâÄ¿µÄÊı¾İ
-// ´ËÀàÉú³ÉÊı¾İÊ±£¬±ØĞëÒª´«ÈëÊı¾İÉú³É·½·¨£¨Éú³Éº¯Êı£©ºÍÊı¾İÉú³ÉÂ·¾¶
-// Èç¹û²»ºöÂÔÊı¾İÉú³ÉÒì³££¬Ä¬ÈÏÔÚÊı¾İÉú³É´íÎóÊ±Å×³öÒì³£ÖĞ¶Ï³ÌĞò
-// Èç¹ûÊ¹ÓÃÎŞ²Î¹¹Ôìº¯Êı£¬½«Ê¹ÓÃÄ¬ÈÏÅäÖÃ
+// SpecialJudgeDataMakerï¼šç»§æ‰¿è‡ªDataMakerç±»ï¼Œç”¨äºå®ç°ç”ŸæˆSpecialJudgeé¢˜ç›®çš„æ•°æ®
+// æ­¤ç±»ç”Ÿæˆæ•°æ®æ—¶ï¼Œå¿…é¡»è¦ä¼ å…¥æ•°æ®ç”Ÿæˆæ–¹æ³•ï¼ˆç”Ÿæˆå‡½æ•°ï¼‰å’Œæ•°æ®ç”Ÿæˆè·¯å¾„
+// å¦‚æœä¸å¿½ç•¥æ•°æ®ç”Ÿæˆå¼‚å¸¸ï¼Œé»˜è®¤åœ¨æ•°æ®ç”Ÿæˆé”™è¯¯æ—¶æŠ›å‡ºå¼‚å¸¸ä¸­æ–­ç¨‹åº
+// å¦‚æœä½¿ç”¨æ— å‚æ„é€ å‡½æ•°ï¼Œå°†ä½¿ç”¨é»˜è®¤é…ç½®
 class SpecialJudgeDataMaker :public DataMaker {
 protected:
-	virtual void make(int __test_num) override {
-		std::cerr << "Test" << __test_num << " :make begin" << std::endl;
-		std::string __INPUT_FILE__ = fileNameMaker(__test_num, testcasePath, 1);
+    virtual void make(int __test_num) override {
+        std::cerr << "Test" << __test_num << " :make begin" << std::endl;
+        std::string __INPUT_FILE__ = fileNameMaker(__test_num, testcasePath, 1);
 
-		makeInFile(__INPUT_FILE__, __test_num);
-		//std½â·¨
+        makeInFile(__INPUT_FILE__, __test_num);
+        //stdè§£æ³•
 
-		//Special Judge²»²úÉú.outÎÄ¼ş£¬½«Ìø¹ıÊä³öÊı¾İÉú³É
-		//Ê¹ÓÃstd±ê³ÌÖØ¶¨Ïòµ½ÎÄ¼şÊä³ö.outÎÄ¼ş
+        //Special Judgeä¸äº§ç”Ÿ.outæ–‡ä»¶ï¼Œå°†è·³è¿‡è¾“å‡ºæ•°æ®ç”Ÿæˆ
+        //ä½¿ç”¨stdæ ‡ç¨‹é‡å®šå‘åˆ°æ–‡ä»¶è¾“å‡º.outæ–‡ä»¶
 
-		std::cerr << "Special Judge Test , Skip OutputFile Create !" << std::endl;
+        std::cerr << "Special Judge Test , Skip OutputFile Create !" << std::endl;
 
-		std::cerr << "Test" << __test_num << " :make done!" << std::endl;
-		std::cerr << std::endl;
-	}
+        std::cerr << "Test" << __test_num << " :make done!" << std::endl;
+        std::cerr << std::endl;
+    }
 public:
-	virtual void run() override {
-		if (testMakeFunction == nullptr)throw std::runtime_error("NullPtrError:You are not set make function!");
-		if (testcasePath == "")throw std::runtime_error("NoPathError:You are not set path!");
-		if (testNum < 1)throw std::runtime_error("NoTestNumError:You are not set testnum!");
-		for (int i = 1; i <= testNum; i++) {
-			make(i);
-		}
-		std::cerr << "All TestCases make done!" << std::endl;
-	}
+    virtual void run() override {
+        if (testMakeFunction == nullptr)throw std::runtime_error("NullPtrError:You are not set make function!");
+        if (testcasePath == "")throw std::runtime_error("NoPathError:You are not set path!");
+        if (testNum < 1)throw std::runtime_error("NoTestNumError:You are not set testnum!");
+        for (int i = 1; i <= testNum; i++) {
+            make(i);
+        }
+        std::cerr << "All TestCases make done!" << std::endl;
+    }
 
-	virtual void defaultPathSet() override {
-		DataMaker::defaultPathSet();
-	}
+    virtual void defaultPathSet() override {
+        DataMaker::defaultPathSet();
+    }
 
-	SpecialJudgeDataMaker() { this->defaultPathSet(); }
-	//¼Ì³Ğ¸¸Àà¹¹Ôìº¯Êı£¬²»Ìá¹©ĞÂµÄ¹¹Ôìº¯Êı£¨²»ĞèÒªĞÂ¹¹Ôìº¯Êı£©
-	//¹¹Ôìº¯Êı£ºÌá¹©ÎŞ²Î¹¹Ôìº¯Êı£¬ÓĞ²Î¹¹Ôìº¯ÊıÓĞ3¸ö²ÎÊı,²ÎÊıÎ»ÖÃËæÒâ
-	//¿ÉÒÔÊ¡ÂÔ²âÊÔÊı¾İ¸öÊı£¬Ä¬ÈÏÎª12×éÊı¾İ
-	SpecialJudgeDataMaker(std::string path, MakeTestFun func, int testNum = 12) : DataMaker(path, func, testNum) {}
-	SpecialJudgeDataMaker(std::string path, int testNum, MakeTestFun func) : DataMaker(path, func, testNum) {}
-	SpecialJudgeDataMaker(int testNum, std::string path, MakeTestFun func) : DataMaker(path, func, testNum) {}
-	SpecialJudgeDataMaker(int testNum, MakeTestFun func, std::string path) : DataMaker(path, func, testNum) {}
-	SpecialJudgeDataMaker(MakeTestFun func, int testNum, std::string path) : DataMaker(path, func, testNum) {}
-	SpecialJudgeDataMaker(MakeTestFun func, std::string path, int testNum = 12) : DataMaker(path, func, testNum) {}
+    SpecialJudgeDataMaker() { this->defaultPathSet(); }
+    //ç»§æ‰¿çˆ¶ç±»æ„é€ å‡½æ•°ï¼Œä¸æä¾›æ–°çš„æ„é€ å‡½æ•°ï¼ˆä¸éœ€è¦æ–°æ„é€ å‡½æ•°ï¼‰
+    //æ„é€ å‡½æ•°ï¼šæä¾›æ— å‚æ„é€ å‡½æ•°ï¼Œæœ‰å‚æ„é€ å‡½æ•°æœ‰3ä¸ªå‚æ•°,å‚æ•°ä½ç½®éšæ„
+    //å¯ä»¥çœç•¥æµ‹è¯•æ•°æ®ä¸ªæ•°ï¼Œé»˜è®¤ä¸º12ç»„æ•°æ®
+    SpecialJudgeDataMaker(std::string path, MakeTestFun func, int testNum = 12) : DataMaker(path, func, testNum) {}
+    SpecialJudgeDataMaker(std::string path, int testNum, MakeTestFun func) : DataMaker(path, func, testNum) {}
+    SpecialJudgeDataMaker(int testNum, std::string path, MakeTestFun func) : DataMaker(path, func, testNum) {}
+    SpecialJudgeDataMaker(int testNum, MakeTestFun func, std::string path) : DataMaker(path, func, testNum) {}
+    SpecialJudgeDataMaker(MakeTestFun func, int testNum, std::string path) : DataMaker(path, func, testNum) {}
+    SpecialJudgeDataMaker(MakeTestFun func, std::string path, int testNum = 12) : DataMaker(path, func, testNum) {}
 };
 
 
-// DataMakerFromEXE£º¼Ì³Ğ×ÔDataMakerÀà£¬ÓÃÓÚÊµÏÖÉú³ÉÊı¾İ£¬Ê¹ÓÃstd¿ÉÖ´ĞĞÎÄ¼şÉú³ÉÊı¾İ
-// ´ËÀàÉú³ÉÊı¾İÊ±£¬±ØĞëÒª´«ÈëÊı¾İÉú³É·½·¨£¨Éú³Éº¯Êı£©¡¢std¿ÉÖ´ĞĞÎÄ¼şµÄÈ«Â·¾¶ºÍÊı¾İÉú³ÉÂ·¾¶
-// Èç¹û²»ºöÂÔÊı¾İÉú³ÉÒì³££¬Ä¬ÈÏÔÚÊı¾İÉú³É´íÎóÊ±Å×³öÒì³£ÖĞ¶Ï³ÌĞò
+// DataMakerFromEXEï¼šç»§æ‰¿è‡ªDataMakerç±»ï¼Œç”¨äºå®ç°ç”Ÿæˆæ•°æ®ï¼Œä½¿ç”¨stdå¯æ‰§è¡Œæ–‡ä»¶ç”Ÿæˆæ•°æ®
+// æ­¤ç±»ç”Ÿæˆæ•°æ®æ—¶ï¼Œå¿…é¡»è¦ä¼ å…¥æ•°æ®ç”Ÿæˆæ–¹æ³•ï¼ˆç”Ÿæˆå‡½æ•°ï¼‰ã€stdå¯æ‰§è¡Œæ–‡ä»¶çš„å…¨è·¯å¾„å’Œæ•°æ®ç”Ÿæˆè·¯å¾„
+// å¦‚æœä¸å¿½ç•¥æ•°æ®ç”Ÿæˆå¼‚å¸¸ï¼Œé»˜è®¤åœ¨æ•°æ®ç”Ÿæˆé”™è¯¯æ—¶æŠ›å‡ºå¼‚å¸¸ä¸­æ–­ç¨‹åº
 class DataMakerFromEXE :public DataMaker {
 protected:
-	std::string cmd;
+    std::string cmd;
 
-	//Ê¹ÓÃ±ê³ÌµÄEXEÎÄ¼ş¹¹ÔìÊı¾İ
-	void makeOutFileEXE(std::string __INPUT_FILE__, std::string __OUTPUT_FILE__, int __test_num) {
-		std::cerr << __OUTPUT_FILE__ << " :make begin" << std::endl;
-		auto tcmd = cmd;
-		//cmd×Ö·û´®Îªstd³ÌĞòµÄÈ«Â·¾¶
-		tcmd += " < " + __INPUT_FILE__;
-		tcmd += " > " + __OUTPUT_FILE__;
-		int returnNum = system(tcmd.c_str());
-		if (returnNum) {
-			//µ÷ÓÃ±ê³ÌÊ±³öÏÖ´íÎó£¬Å×³öÒì³£
-			std::cerr << __OUTPUT_FILE__ << " :make failed , error num = " << returnNum << std::endl;
-			if (!ignoreMakeOutputDataError) {
-				throw std::runtime_error("OutputFileMakeError:make output file error!");
-			}
-		}
-		else {
-			std::cerr << __OUTPUT_FILE__ << " :make done" << std::endl;
-		}
-	}
+    //ä½¿ç”¨æ ‡ç¨‹çš„EXEæ–‡ä»¶æ„é€ æ•°æ®
+    void makeOutFileEXE(std::string __INPUT_FILE__, std::string __OUTPUT_FILE__, int __test_num) {
+        std::cerr << __OUTPUT_FILE__ << " :make begin" << std::endl;
+        auto tcmd = cmd;
+        //cmdå­—ç¬¦ä¸²ä¸ºstdç¨‹åºçš„å…¨è·¯å¾„
+        tcmd += " < " + __INPUT_FILE__;
+        tcmd += " > " + __OUTPUT_FILE__;
+        int returnNum = system(tcmd.c_str());
+        if (returnNum) {
+            //è°ƒç”¨æ ‡ç¨‹æ—¶å‡ºç°é”™è¯¯ï¼ŒæŠ›å‡ºå¼‚å¸¸
+            std::cerr << __OUTPUT_FILE__ << " :make failed , error num = " << returnNum << std::endl;
+            if (!ignoreMakeOutputDataError) {
+                throw std::runtime_error("OutputFileMakeError:make output file error!");
+            }
+        }
+        else {
+            std::cerr << __OUTPUT_FILE__ << " :make done" << std::endl;
+        }
+    }
 
-	virtual void make(int __test_num) override {
-		std::cerr << "Test" << __test_num << " :make begin" << std::endl;
-		std::string __INPUT_FILE__ = fileNameMaker(__test_num, testcasePath, 1);
-		std::string __OUTPUT_FILE__ = fileNameMaker(__test_num, testcasePath, 0);
+    virtual void make(int __test_num) override {
+        std::cerr << "Test" << __test_num << " :make begin" << std::endl;
+        std::string __INPUT_FILE__ = fileNameMaker(__test_num, testcasePath, 1);
+        std::string __OUTPUT_FILE__ = fileNameMaker(__test_num, testcasePath, 0);
 
-		makeInFile(__INPUT_FILE__, __test_num);
-		//std½â·¨
+        makeInFile(__INPUT_FILE__, __test_num);
+        //stdè§£æ³•
 
-		//Special Judge²»²úÉú.outÎÄ¼ş£¬½«Ìø¹ıÊä³öÊı¾İÉú³É
-		//Èç¹û²»ÊÇSpecialJudge£¬Éú³É.outÎÄ¼ş
-		makeOutFileEXE(__INPUT_FILE__, __OUTPUT_FILE__, __test_num);
+        //Special Judgeä¸äº§ç”Ÿ.outæ–‡ä»¶ï¼Œå°†è·³è¿‡è¾“å‡ºæ•°æ®ç”Ÿæˆ
+        //å¦‚æœä¸æ˜¯SpecialJudgeï¼Œç”Ÿæˆ.outæ–‡ä»¶
+        makeOutFileEXE(__INPUT_FILE__, __OUTPUT_FILE__, __test_num);
 
-		//Ê¹ÓÃstd±ê³ÌÖØ¶¨Ïòµ½ÎÄ¼şÊä³ö.outÎÄ¼ş
+        //ä½¿ç”¨stdæ ‡ç¨‹é‡å®šå‘åˆ°æ–‡ä»¶è¾“å‡º.outæ–‡ä»¶
 
-		std::cerr << "Test" << __test_num << " :make done!" << std::endl;
-		std::cerr << std::endl;
-	}
+        std::cerr << "Test" << __test_num << " :make done!" << std::endl;
+        std::cerr << std::endl;
+    }
 
 public:
-	virtual void run() override {
-		if (testMakeFunction == nullptr)throw std::runtime_error("NullPtrError:You are not set make function!");
-		if (testcasePath == "")throw std::runtime_error("NoPathError:You are not set path!");
-		if (testNum < 1)throw std::runtime_error("NoTestNumError:You are not set testnum!");
-		if (cmd == "")throw std::runtime_error("NoStdSourceError:You are not set std Source!");
-		for (int i = 1; i <= testNum; i++) {
-			make(i);
-		}
-		std::cerr << "All TestCases make done!" << std::endl;
-	}
+    virtual void run() override {
+        if (testMakeFunction == nullptr)throw std::runtime_error("NullPtrError:You are not set make function!");
+        if (testcasePath == "")throw std::runtime_error("NoPathError:You are not set path!");
+        if (testNum < 1)throw std::runtime_error("NoTestNumError:You are not set testnum!");
+        if (cmd == "")throw std::runtime_error("NoStdSourceError:You are not set std Source!");
+        for (int i = 1; i <= testNum; i++) {
+            make(i);
+        }
+        std::cerr << "All TestCases make done!" << std::endl;
+    }
 
-	virtual void defaultPathSet() override {
-		DataMaker::defaultPathSet();
-		cmd = "D:/input/std.exe";
-	}
+    virtual void defaultPathSet() override {
+        DataMaker::defaultPathSet();
+        cmd = DEFAULT_PATH;
+    }
 
-	void setstdEXEPath(std::string stdEXEPath) {
-		this->cmd = stdEXEPath;
-	}
+    void setstdEXEPath(std::string stdEXEPath) {
+        this->cmd = stdEXEPath;
+    }
 
-	DataMakerFromEXE() { this->defaultPathSet(); }
-	//¹¹Ôìº¯Êı£ºÌá¹©ÎŞ²Î¹¹Ôìº¯Êı£¬ÓĞ²Î¹¹Ôìº¯ÊıÓĞ4¸ö²ÎÊı£¬µÚÒ»¸ö²ÎÊı±ØĞëÎªstd³ÌĞòµÄÂ·¾¶£¬ÆäÓà²ÎÊıËæÒâ
-	//¿ÉÒÔÊ¡ÂÔ²âÊÔÊı¾İ¸öÊı£¬Ä¬ÈÏÎª12×éÊı¾İ
-	DataMakerFromEXE(std::string stdEXEPath, std::string path, MakeTestFun func, int testNum = 12) : DataMaker(path,func,testNum) {
-		setstdEXEPath(stdEXEPath);
-	}
-	DataMakerFromEXE(std::string stdEXEPath, std::string path, int testNum, MakeTestFun func) : DataMaker(path, func, testNum) {
-		setstdEXEPath(stdEXEPath);
-	}
-	DataMakerFromEXE(std::string stdEXEPath, int testNum, std::string path, MakeTestFun func) : DataMaker(path, func, testNum) {
-		setstdEXEPath(stdEXEPath);
-	}
-	DataMakerFromEXE(std::string stdEXEPath, int testNum, MakeTestFun func, std::string path) : DataMaker(path, func, testNum) {
-		setstdEXEPath(stdEXEPath);
-	}
-	DataMakerFromEXE(std::string stdEXEPath, MakeTestFun func, int testNum, std::string path) : DataMaker(path, func, testNum) {
-		setstdEXEPath(stdEXEPath);
-	}
-	DataMakerFromEXE(std::string stdEXEPath, MakeTestFun func, std::string path, int testNum = 12) : DataMaker(path, func, testNum) {
-		setstdEXEPath(stdEXEPath);
-	}
-	
-	//¼Ì³Ğ¸¸Àà¹¹Ôìº¯Êı
-	//¹¹Ôìº¯Êı£ºÌá¹©ÎŞ²Î¹¹Ôìº¯Êı£¬ÓĞ²Î¹¹Ôìº¯ÊıÓĞ3¸ö²ÎÊı,²ÎÊıÎ»ÖÃËæÒâ
-	//¿ÉÒÔÊ¡ÂÔ²âÊÔÊı¾İ¸öÊı£¬Ä¬ÈÏÎª12×éÊı¾İ
-	DataMakerFromEXE(std::string path, MakeTestFun func, int testNum = 12) : DataMaker(path,func,testNum) {}
-	DataMakerFromEXE(std::string path, int testNum, MakeTestFun func) : DataMaker(path, func, testNum) {}
-	DataMakerFromEXE(int testNum, std::string path, MakeTestFun func) : DataMaker(path, func, testNum) {}
-	DataMakerFromEXE(int testNum, MakeTestFun func, std::string path) : DataMaker(path, func, testNum) {}
-	DataMakerFromEXE(MakeTestFun func, int testNum, std::string path) : DataMaker(path, func, testNum) {}
-	DataMakerFromEXE(MakeTestFun func, std::string path, int testNum = 12) : DataMaker(path, func, testNum) {}
+    DataMakerFromEXE() { this->defaultPathSet(); }
+    //æ„é€ å‡½æ•°ï¼šæä¾›æ— å‚æ„é€ å‡½æ•°ï¼Œæœ‰å‚æ„é€ å‡½æ•°æœ‰4ä¸ªå‚æ•°ï¼Œç¬¬ä¸€ä¸ªå‚æ•°å¿…é¡»ä¸ºstdç¨‹åºçš„è·¯å¾„ï¼Œå…¶ä½™å‚æ•°éšæ„
+    //å¯ä»¥çœç•¥æµ‹è¯•æ•°æ®ä¸ªæ•°ï¼Œé»˜è®¤ä¸º12ç»„æ•°æ®
+    DataMakerFromEXE(std::string stdEXEPath, std::string path, MakeTestFun func, int testNum = 12) : DataMaker(path,func,testNum) {
+        setstdEXEPath(stdEXEPath);
+    }
+    DataMakerFromEXE(std::string stdEXEPath, std::string path, int testNum, MakeTestFun func) : DataMaker(path, func, testNum) {
+        setstdEXEPath(stdEXEPath);
+    }
+    DataMakerFromEXE(std::string stdEXEPath, int testNum, std::string path, MakeTestFun func) : DataMaker(path, func, testNum) {
+        setstdEXEPath(stdEXEPath);
+    }
+    DataMakerFromEXE(std::string stdEXEPath, int testNum, MakeTestFun func, std::string path) : DataMaker(path, func, testNum) {
+        setstdEXEPath(stdEXEPath);
+    }
+    DataMakerFromEXE(std::string stdEXEPath, MakeTestFun func, int testNum, std::string path) : DataMaker(path, func, testNum) {
+        setstdEXEPath(stdEXEPath);
+    }
+    DataMakerFromEXE(std::string stdEXEPath, MakeTestFun func, std::string path, int testNum = 12) : DataMaker(path, func, testNum) {
+        setstdEXEPath(stdEXEPath);
+    }
+
+    //ç»§æ‰¿çˆ¶ç±»æ„é€ å‡½æ•°
+    //æ„é€ å‡½æ•°ï¼šæä¾›æ— å‚æ„é€ å‡½æ•°ï¼Œæœ‰å‚æ„é€ å‡½æ•°æœ‰3ä¸ªå‚æ•°,å‚æ•°ä½ç½®éšæ„
+    //å¯ä»¥çœç•¥æµ‹è¯•æ•°æ®ä¸ªæ•°ï¼Œé»˜è®¤ä¸º12ç»„æ•°æ®
+    DataMakerFromEXE(std::string path, MakeTestFun func, int testNum = 12) : DataMaker(path,func,testNum) {}
+    DataMakerFromEXE(std::string path, int testNum, MakeTestFun func) : DataMaker(path, func, testNum) {}
+    DataMakerFromEXE(int testNum, std::string path, MakeTestFun func) : DataMaker(path, func, testNum) {}
+    DataMakerFromEXE(int testNum, MakeTestFun func, std::string path) : DataMaker(path, func, testNum) {}
+    DataMakerFromEXE(MakeTestFun func, int testNum, std::string path) : DataMaker(path, func, testNum) {}
+    DataMakerFromEXE(MakeTestFun func, std::string path, int testNum = 12) : DataMaker(path, func, testNum) {}
 };
 
+
+//unable to test
 class DataMakerFromCppSourceFile :public DataMakerFromEXE {
 protected:
-	// cmdÎªc++Ô´ÎÄ¼şÂ·¾¶
+    // cmdä¸ºc++æºæ–‡ä»¶è·¯å¾„
 
-	std::string gccCompilePath;
+    std::string gccCompilePath;
 
-	std::string vcCompile;
+    std::string vcCompile;
 
-	void autoComilePath() {
-		int gccReturnNum = system("g++ -v");
-		int vcReturnNum = system("cl.exe -v");
-		if (!gccReturnNum) {
-			gccCompilePath = "g++";
-		}
-		if (!vcReturnNum) {
-			vcCompile = "cl.exe";
-		}
-	}
+    std::string cppSourcePath;
 
-	void compileCppFile(std::string stdSourceFilePath) {
-		if (gccCompilePath == "" && vcCompile == "") {
-			std::cerr << "compile path not set,system will auto get comple path" << std::endl;
-			autoComilePath();
-		}
-		if (gccCompilePath == "" && vcCompile == "") {
-			std::cerr << "compile error : system can't get comple path" << std::endl;
-			throw std::runtime_error("NoCompilePathError:system path has no comile path");
-		}
-		std::string compileCmd;
-		if (gccCompilePath != "") {
-			compileCmd = gccCompilePath;
-		}
-		else {
-			compileCmd = vcCompile;
-		}
-	}
 
-	virtual void make(int __test_num) override {
-		std::cerr << "Test" << __test_num << " :make begin" << std::endl;
-		std::string __INPUT_FILE__ = fileNameMaker(__test_num, testcasePath, 1);
-		std::string __OUTPUT_FILE__ = fileNameMaker(__test_num, testcasePath, 0);
-
-		makeInFile(__INPUT_FILE__, __test_num);
-		//std½â·¨
-
-		//Special Judge²»²úÉú.outÎÄ¼ş£¬½«Ìø¹ıÊä³öÊı¾İÉú³É
-		//Èç¹û²»ÊÇSpecialJudge£¬Éú³É.outÎÄ¼ş
-		makeOutFileEXE(__INPUT_FILE__, __OUTPUT_FILE__, __test_num);
-
-		//Ê¹ÓÃstd±ê³ÌÖØ¶¨Ïòµ½ÎÄ¼şÊä³ö.outÎÄ¼ş
-
-		std::cerr << "Test" << __test_num << " :make done!" << std::endl;
-		std::cerr << std::endl;
-	}
 public:
+    const std::string &getGccCompilePath() const {
+        return gccCompilePath;
+    }
+
+    void setGccCompilePath(const std::string &gccCompilePath) {
+        DataMakerFromCppSourceFile::gccCompilePath = gccCompilePath;
+    }
+
+    const std::string &getVcCompile() const {
+        return vcCompile;
+    }
+
+    void setVcCompile(const std::string &vcCompile) {
+        DataMakerFromCppSourceFile::vcCompile = vcCompile;
+    }
+
+    const std::string &getCppSourcePah() const {
+        return cppSourcePath;
+    }
+
+    void setCppSourcePah(const std::string &cppSourcePah) {
+        DataMakerFromCppSourceFile::cppSourcePath = cppSourcePah;
+    }
+
+protected:
+
+    void autoCompilePath() {
+        int gccReturnNum = system("g++ -v");
+        int vcReturnNum = system("cl.exe -v");
+        if (!gccReturnNum) {
+            gccCompilePath = "g++";
+        }
+        if (!vcReturnNum) {
+            vcCompile = "cl.exe";
+        }
+    }
+
+    void compileCppFile(std::string stdSourceFilePath) {
+        if (gccCompilePath == "" && vcCompile == "") {
+            std::cerr << "compile path not set,system will auto get comple path" << std::endl;
+            autoCompilePath();
+        }
+        if (gccCompilePath == "" && vcCompile == "") {
+            std::cerr << "compile error : system can't get comple path" << std::endl;
+            throw std::runtime_error("NoCompilePathError:system path has no comile path");
+        }
+        std::string compileCmd;
+        if (gccCompilePath != "") {
+            compileCmd = gccCompilePath;
+        }
+        else {
+            compileCmd = vcCompile;
+        }
+        compileCmd += " " + cppSourcePath;
+        compileCpp(compileCmd);
+    }
+
+    void compileCpp(std::string cmd, std::string path = "a.exe"){
+        int code = system((cmd + " -o " + path).c_str());
+        if(!code){
+            std::cerr << "Compile Error, Error code = " + code << std::endl;
+            throw new std::runtime_error("Compile Error, Error code = " + code);
+        }
+        DataMakerFromEXE::setstdEXEPath(path);
+    }
+
+    virtual void make(int __test_num) override {
+        std::cerr << "Test" << __test_num << " :make begin" << std::endl;
+        std::string __INPUT_FILE__ = fileNameMaker(__test_num, testcasePath, 1);
+        std::string __OUTPUT_FILE__ = fileNameMaker(__test_num, testcasePath, 0);
+
+        makeInFile(__INPUT_FILE__, __test_num);
+        //stdè§£æ³•
+
+        //Special Judgeä¸äº§ç”Ÿ.outæ–‡ä»¶ï¼Œå°†è·³è¿‡è¾“å‡ºæ•°æ®ç”Ÿæˆ
+        //å¦‚æœä¸æ˜¯SpecialJudgeï¼Œç”Ÿæˆ.outæ–‡ä»¶
+        makeOutFileEXE(__INPUT_FILE__, __OUTPUT_FILE__, __test_num);
+
+        //ä½¿ç”¨stdæ ‡ç¨‹é‡å®šå‘åˆ°æ–‡ä»¶è¾“å‡º.outæ–‡ä»¶
+
+        std::cerr << "Test" << __test_num << " :make done!" << std::endl;
+        std::cerr << std::endl;
+    }
+public:
+    DataMakerFromCppSourceFile(){
+        autoCompilePath();
+    }
+
+    //ç»§æ‰¿çˆ¶ç±»æ„é€ å‡½æ•°
+    DataMakerFromCppSourceFile(std::string path, MakeTestFun func, int testNum = 12) : DataMakerFromEXE(path,func,testNum) {
+        autoCompilePath();
+    }
+    DataMakerFromCppSourceFile(std::string path, int testNum, MakeTestFun func) : DataMakerFromEXE(path, func, testNum) {
+        autoCompilePath();
+    }
+    DataMakerFromCppSourceFile(int testNum, std::string path, MakeTestFun func) : DataMakerFromEXE(path, func, testNum) {
+        autoCompilePath();
+    }
+    DataMakerFromCppSourceFile(int testNum, MakeTestFun func, std::string path) : DataMakerFromEXE(path, func, testNum) {
+        autoCompilePath();
+    }
+    DataMakerFromCppSourceFile(MakeTestFun func, int testNum, std::string path) : DataMakerFromEXE(path, func, testNum) {
+        autoCompilePath();
+    }
+    DataMakerFromCppSourceFile(MakeTestFun func, std::string path, int testNum = 12) : DataMakerFromEXE(path, func, testNum) {
+        autoCompilePath();
+    }
+    DataMakerFromCppSourceFile(std::string stdCppSource, std::string path, MakeTestFun func, int testNum = 12) : DataMakerFromEXE(path,func,testNum) {
+        autoCompilePath();
+    }
+    DataMakerFromCppSourceFile(std::string stdCppSource,std::string path, int testNum, MakeTestFun func) : DataMakerFromEXE(path, func, testNum) {
+        autoCompilePath();
+    }
+    DataMakerFromCppSourceFile(std::string stdCppSource,int testNum, std::string path, MakeTestFun func) : DataMakerFromEXE(path, func, testNum) {
+        autoCompilePath();
+    }
+    DataMakerFromCppSourceFile(std::string stdCppSource,int testNum, MakeTestFun func, std::string path) : DataMakerFromEXE(path, func, testNum) {
+        autoCompilePath();
+    }
+    DataMakerFromCppSourceFile(std::string stdCppSource,MakeTestFun func, int testNum, std::string path) : DataMakerFromEXE(path, func, testNum) {
+        autoCompilePath();
+    }
+    DataMakerFromCppSourceFile(std::string stdCppSource,MakeTestFun func, std::string path, int testNum = 12) : DataMakerFromEXE(path, func, testNum) {
+        autoCompilePath();
+    }
+};
+
+
+//unable to test
+class DataMakerFromSourceText :public DataMakerFromCppSourceFile{
+public:
+    
+protected:
+    std::string source;
+public:
+    const std::string &getSource() const {
+        return source;
+    }
+
+    void setSource(const std::string &source) {
+        DataMakerFromSourceText::source = source;
+    }
 
 };
