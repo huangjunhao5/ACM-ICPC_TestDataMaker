@@ -5,6 +5,10 @@
 
 基本用法：创建对应的对象，设置正确的参数后，调用对象的.run()函数即可完成数据生成
 
+默认std的二进制程序路径：DataMaker程序运行路径下的/std/a.exe
+
+默认std的C++源文件路径：DataMaker程序运行路径下的/std/std.cpp
+
 下面说明DataMaker.h中一些类的用法：
 
 # DataMaker
@@ -17,6 +21,25 @@
 未实现make函数和run函数，需要重写make函数和run函数
 
 make函数编写说明：传入一个参数，为当前制造的数据编号（第几组数据）
+
+下面是make函数的编写样例：
+```cpp
+void make(int index){ // index表示当前生成的数据编号
+  // 输出使用cout
+  // 比如本题是a+b，输入数据只有a和b （a, b <= 1e9）
+  // 我需要一组数据，使得啊a = 1e9， b = 1e9，其他组数据随机
+  int a = 0,b = 0;
+  if(index == 1){// 第一组a和b都是1e9
+    a = 1e9;
+    b = 1e9;
+  }else{
+    a = rand() % (int)(1e9);
+    b = rand() % (int)(1e9);
+  }
+  cout << a << ' ' << b << endl;
+  // 样例编写完毕
+}
+```
 
 调用数据路径生成函数生成测试数据的全路径（包括.in文件和.out文件，1为in，0为out）
 
@@ -32,7 +55,7 @@ run函数需要进行基本的运行判断，判断生成数据的必要参数�
 
 如果使用无参构造函数，将使用默认的生成参数设置
 
-数据生成的路径：D:/input/
+数据生成的路径：程序目录下的/data/文件夹下
 
 数据的组数：12
 
@@ -150,4 +173,6 @@ DataMakerFromEXE：继承自DataMaker类，用于实现生成数据，使用std�
 标程默认路径：D:/input/std.exe
 
 其余默认配置继承自DataMaker类
+
+
 
