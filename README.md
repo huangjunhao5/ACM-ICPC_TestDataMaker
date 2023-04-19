@@ -5,9 +5,9 @@
 
 基本用法：创建对应的对象，设置正确的参数后，调用对象的.run()函数即可完成数据生成
 
-默认std的二进制程序路径：DataMaker程序运行路径下的/std/a.exe
+*默认std的二进制程序路径：DataMaker程序运行路径下的/std/a.exe*
 
-默认std的C++源文件路径：DataMaker程序运行路径下的/std/std.cpp
+*默认std的C++源文件路径：DataMaker程序运行路径下的/std/std.cpp*
 
 下面说明DataMaker.h中一些类的用法：
 
