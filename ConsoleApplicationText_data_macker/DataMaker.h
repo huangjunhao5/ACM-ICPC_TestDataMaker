@@ -73,7 +73,7 @@ protected:
     }
 
     //使用fun函数构造数据
-    void makeInFile(std::string __INPUT_FILE__ ,int __test_num) {
+    virtual void makeInFile(std::string __INPUT_FILE__ ,int __test_num) {
         std::clog << __INPUT_FILE__ << " :make begin" << std::endl;
         auto it = freopen(__INPUT_FILE__.c_str(), "w", stdout);
         if (it == nullptr) {
@@ -357,8 +357,8 @@ protected:
             autoCompilePath();
         }
         if (gccCompilePath == "" && vcCompile == "") {
-            std::clog << "compile error : system can't get comple path" << std::endl;
-            throw std::runtime_error("NoCompilePathError:system path has no comile path");
+            std::clog << "std Source Compilation error : system can't get Compile path" << std::endl;
+            throw std::runtime_error(" NoCompilePathError:system path has no Compile path");
         }
         std::string compileCmd;
         if (gccCompilePath != "") {
@@ -378,8 +378,8 @@ protected:
         std::clog << "Compile Code: " << code << std::endl;
 
         if(code){
-            std::clog << "Compile Error, Error code = " + code << std::endl;
-            throw new std::runtime_error("Compile Error, Error code = " + code);
+            std::clog << &"Compile Error, Error code = " [ code] << std::endl;
+            throw std::runtime_error(" std Source Compilation Error");
         }
 //        char runPath[1024] = {0};
 //        getcwd(runPath, sizeof(runPath));
@@ -390,17 +390,18 @@ protected:
     virtual void make(int __test_num) override {
         DataMakerFromEXE::make(__test_num);
     }
+
+    void loadDefault(){
+        setCppSourcePath(DEFAULT_PATH + "/std/std.cpp");
+        std::clog << "Use default std C++ Source :" + DEFAULT_PATH + "/std/std.cpp" <<std::endl;
+    }
+public:
     virtual void run() override{
         compileCppFile(cppSourcePath);
         std::clog << std::endl;
         std::clog << std::endl;
         DataMakerFromEXE::run();
     }
-    void loadDefault(){
-        setCppSourcePath(DEFAULT_PATH + "/std/std.cpp");
-        std::clog << "Use default std C++ Source :" + DEFAULT_PATH + "/std/std.cpp" <<std::endl;
-    }
-public:
     DataMakerFromCppSourceFile(): DataMakerFromEXE(){
         autoCompilePath();
         loadDefault();
@@ -457,20 +458,3 @@ public:
 
 // unable to test
 class JudgeSubmit :public DataMakerFromCppSourceFile{};
-
-//unable to test
-class DataMakerFromSourceText :public DataMakerFromCppSourceFile{
-public:
-
-protected:
-    std::string source;
-public:
-    const std::string &getSource() const {
-        return source;
-    }
-
-    void setSource(const std::string &source) {
-        DataMakerFromSourceText::source = source;
-    }
-
-};
